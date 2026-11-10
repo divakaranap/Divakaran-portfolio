@@ -4,12 +4,15 @@ import { Menu, X } from 'lucide-react'
 
 const personalEmail = 'divakaranperumal27@gmail.com'
 
+const RESUME_URL = '/assets/resume/Divakaran_AP_Resume.pdf'
+
 // ── Nav items ────────────────────────────────────────────────────────────
 const navItems = [
   { id: 'hero',         label: 'HOME' },
   { id: 'projects',     label: 'WORK' },
   { id: 'about',        label: 'ABOUT' },
   { id: 'skills',       label: 'SKILLS' },
+  { id: 'resume',       label: 'RESUME',  isExternal: true },
   { id: 'contact',      label: 'CONTACT' },
 ]
 
@@ -63,6 +66,7 @@ export const Navbar: React.FC = () => {
 
   const scrollTo = (id: string) => {
     setMobileOpen(false)
+    if (id === 'resume') { window.open(RESUME_URL, '_blank', 'noopener'); return }
     setActiveSection(id)
     if (id === 'hero') { window.scrollTo({ top: 0, behavior: 'smooth' }); return }
     const el = document.getElementById(id)
@@ -182,11 +186,12 @@ export const Navbar: React.FC = () => {
                   </button>
                 )
               })}
-              {/* CTA button */}
+              {/* Resume download button */}
               <a
-                href={`mailto:${personalEmail}`}
+                href={RESUME_URL}
+                download="Divakaran_AP_Resume.pdf"
                 style={{
-                  display: 'inline-flex', alignItems: 'center',
+                  display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
                   padding: '0.5rem 1.2rem',
                   background: 'var(--gradient-fire)',
                   color: '#fff',
@@ -197,12 +202,17 @@ export const Navbar: React.FC = () => {
                   textDecoration: 'none',
                   boxShadow: '0 0 20px rgba(255,107,0,0.3)',
                   marginLeft: '0.6rem',
-                  transition: 'box-shadow 0.2s ease',
+                  transition: 'box-shadow 0.2s ease, transform 0.2s ease',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 32px rgba(255,107,0,0.6)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 20px rgba(255,107,0,0.3)')}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 32px rgba(255,107,0,0.6)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 20px rgba(255,107,0,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
               >
-                HIRE ME
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                RESUME
               </a>
             </nav>
           )}
