@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react'
 
 const personalEmail = 'divakaranperumal27@gmail.com'
 
-const RESUME_URL = '/assets/resume/Divakaran_AP_Resume.pdf'
+const RESUME_URL = '/DivakaranAP.pdf'
 
 // ── Nav items ────────────────────────────────────────────────────────────
 const navItems = [
@@ -189,7 +189,7 @@ export const Navbar: React.FC = () => {
               {/* Resume download button */}
               <a
                 href={RESUME_URL}
-                download="Divakaran_AP_Resume.pdf"
+                download="DivakaranAP.pdf"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
                   padding: '0.5rem 1.2rem',

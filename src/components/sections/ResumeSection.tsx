@@ -20,7 +20,7 @@ import {
 } from '../../data/portfolio'
 
 export const ResumeSection: React.FC = () => {
-  const resumeUrl = '/assets/resume/Divakaran_AP_Resume.pdf'
+  const resumeUrl = '/DivakaranAP.pdf'
 
   const highlights = [
     {
@@ -292,7 +292,7 @@ export const ResumeSection: React.FC = () => {
                 }}
               >
                 <FileText size={14} color="var(--color-blue)" />
-                <span>Divakaran_AP_Resume.pdf</span>
+                <span>DivakaranAP.pdf</span>
               </div>
             </div>
 
@@ -483,7 +483,7 @@ export const ResumeSection: React.FC = () => {
               {/* Large Centered CTA Button */}
               <a
                 href={resumeUrl}
-                download="Divakaran_AP_Resume.pdf"
+                download="DivakaranAP.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary"
