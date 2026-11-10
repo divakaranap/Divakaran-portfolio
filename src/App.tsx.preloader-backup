@@ -1,0 +1,87 @@
+import { Suspense, lazy, useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CinematicPreloader } from './components/preloader'
+
+// Lazy load all section components
+const Navbar           = lazy(() => import('./components/layout/Navbar'))
+const Footer           = lazy(() => import('./components/layout/Footer'))
+const CustomCursor     = lazy(() => import('./components/layout/CustomCursor'))
+const HeroSection      = lazy(() => import('./components/sections/HeroSection'))
+const AboutSection     = lazy(() => import('./components/sections/AboutSection'))
+const SkillsSection    = lazy(() => import('./components/sections/SkillsSection'))
+const ProjectsSection  = lazy(() => import('./components/sections/ProjectsSection'))
+const ExperienceSection= lazy(() => import('./components/sections/ExperienceSection'))
+const AchievementsSection = lazy(() => import('./components/sections/AchievementsSection'))
+const CertificationsSection = lazy(() => import('./components/sections/CertificationsSection'))
+const ResumeSection    = lazy(() => import('./components/sections/ResumeSection'))
+const ContactSection   = lazy(() => import('./components/sections/ContactSection'))
+const DivaAI           = lazy(() => import('./components/chat/DivaAI'))
+
+const LoadingFallback = () => (
+  <div style={{
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    minHeight: '100vh', background: 'var(--color-black)',
+  }}>
+    <div style={{
+      width: '36px', height: '36px',
+      border: '2px solid rgba(255,107,0,0.15)',
+      borderTop: '2px solid var(--color-orange)',
+      borderRadius: '50%',
+      animation: 'spin-slow 1s linear infinite',
+    }} />
+  </div>
+)
+
+function App() {
+  const [introComplete, setIntroComplete] = useState(false)
+
+  const handleIntroComplete = useCallback(() => {
+    setIntroComplete(true)
+  }, [])
+
+  return (
+    <div style={{ background: 'var(--color-black)', minHeight: '100vh', overflowX: 'hidden' }}>
+      {/* Cinematic noise texture overlay */}
+      <div className="noise-overlay" />
+
+      {/* ── Cinematic Preloader (session-gated) ── */}
+      <CinematicPreloader onComplete={handleIntroComplete} />
+
+      {/* ── Portfolio Content ── */}
+      <AnimatePresence>
+        {introComplete && (
+          <motion.div
+            key="portfolio"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <Suspense fallback={<LoadingFallback />}>
+              {/* Custom cursor — desktop only */}
+              <CustomCursor />
+
+              <Navbar />
+
+              <main>
+                <HeroSection />
+                <AboutSection />
+                <SkillsSection />
+                <ProjectsSection />
+                <ExperienceSection />
+                <AchievementsSection />
+                <CertificationsSection />
+                <ResumeSection />
+                <ContactSection />
+              </main>
+
+              <Footer />
+              <DivaAI />
+            </Suspense>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+export default App
