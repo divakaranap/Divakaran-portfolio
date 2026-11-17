@@ -298,21 +298,6 @@ const CategoryCard: React.FC<{
           </h3>
         </div>
 
-        <span
-          style={{
-            fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
-            fontSize: '0.68rem',
-            fontWeight: 600,
-            padding: '0.2rem 0.55rem',
-            borderRadius: '6px',
-            background: `${category.color}14`,
-            color: category.color,
-            border: `1px solid ${category.color}25`,
-            letterSpacing: '0.08em',
-          }}
-        >
-          {category.skills.length}
-        </span>
       </div>
 
       {/* Skill Badges */}
