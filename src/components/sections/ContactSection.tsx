@@ -52,23 +52,38 @@ export const ContactSection: React.FC = () => {
     }, 2500)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name || !formData.email || !formData.message) return
 
     setStatus('sending')
 
-    const subjectLine = formData.subject.trim() || `Inquiry from ${formData.name}`
-    const bodyContent = `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    const mailtoUrl = `mailto:${personalInfo.email}?subject=${encodeURIComponent(
-      subjectLine
-    )}&body=${encodeURIComponent(bodyContent)}`
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: 'e4793d5c-ab24-4c70-9cf0-ef72fd60fb23',
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject.trim() || `Portfolio Inquiry from ${formData.name}`,
+          message: formData.message,
+          from_name: 'Portfolio Contact Form',
+          to_name: 'Divakaran A P',
+        }),
+      })
 
-    // Smooth feedback delay before dispatching mailto
-    setTimeout(() => {
-      window.location.href = mailtoUrl
-      setStatus('success')
-    }, 800)
+      const result = await response.json()
+      if (result.success) {
+        setStatus('success')
+      } else {
+        setStatus('idle')
+        alert('Failed to send message. Please try again.')
+      }
+    } catch {
+      setStatus('idle')
+      alert('Network error. Please try again later.')
+    }
   }
 
   const resetForm = () => {
@@ -950,7 +965,7 @@ export const ContactSection: React.FC = () => {
                       {status === 'sending' ? (
                         <>
                           <Loader2 size={18} className="spin-slow" style={{ animation: 'spin-slow 1s linear infinite' }} />
-                          TRANSMITTING VIA MAILTO...
+                          SENDING MESSAGE...
                         </>
                       ) : (
                         <>
