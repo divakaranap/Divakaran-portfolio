@@ -8,130 +8,348 @@ import {
   Sparkles,
   Code2,
   Workflow,
-  ArrowUpRight,
+  Layout,
 } from 'lucide-react'
 
 // ============================================================================
-// SKILLS DATA & CATEGORIES
+// SKILLS DATA — 7 CATEGORIES
 // ============================================================================
 
 interface SkillCategory {
   id: string
   name: string
-  code: string
+  icon: React.ComponentType<{ size?: number; color?: string; style?: React.CSSProperties }>
   color: string
   glowColor: string
-  icon: React.ComponentType<{ size?: number; color?: string; style?: React.CSSProperties }>
   skills: string[]
 }
 
 const CATEGORIES: SkillCategory[] = [
   {
     id: 'programming',
-    name: 'Programming',
-    code: '01 // PROGRAMMING',
-    color: '#FF6B00', // Orange
-    glowColor: 'rgba(255, 107, 0, 0.45)',
+    name: 'Programming Languages',
     icon: Terminal,
-    skills: ['Python', 'Java', 'C'],
+    color: '#FF6B00',
+    glowColor: 'rgba(255, 107, 0, 0.4)',
+    skills: ['Python', 'Java', 'JavaScript', 'SQL'],
   },
   {
-    id: 'ml-ai-frameworks',
-    name: 'ML/AI Frameworks',
-    code: '02 // ML/AI FRAMEWORKS',
-    color: '#3B9EFF', // Blue
-    glowColor: 'rgba(59, 158, 255, 0.45)',
+    id: 'frontend',
+    name: 'Frontend Development',
+    icon: Layout,
+    color: '#3B9EFF',
+    glowColor: 'rgba(59, 158, 255, 0.4)',
+    skills: ['HTML5', 'CSS3', 'React.js', 'Tailwind CSS'],
+  },
+  {
+    id: 'backend',
+    name: 'Backend Development',
+    icon: Code2,
+    color: '#2DD4A0',
+    glowColor: 'rgba(45, 212, 160, 0.4)',
+    skills: ['FastAPI', 'Flask', 'Node.js', 'REST APIs'],
+  },
+  {
+    id: 'ai-ml',
+    name: 'AI & Machine Learning',
     icon: Cpu,
-    skills: ['TensorFlow', 'Scikit-learn', 'NumPy', 'Pandas'],
-  },
-  {
-    id: 'cloud-tools',
-    name: 'Cloud/Tools',
-    code: '03 // CLOUD & TOOLS',
-    color: '#2DD4A0', // Green
-    glowColor: 'rgba(45, 212, 160, 0.45)',
-    icon: Cloud,
-    skills: ['AWS', 'Google Cloud', 'Streamlit', 'MATLAB', 'GitHub'],
-  },
-  {
-    id: 'ai-specializations',
-    name: 'AI Specializations',
-    code: '04 // AI SPECIALIZATIONS',
-    color: '#9B6DFF', // Purple
-    glowColor: 'rgba(155, 109, 255, 0.45)',
-    icon: Brain,
+    color: '#9B6DFF',
+    glowColor: 'rgba(155, 109, 255, 0.4)',
     skills: [
-      'Agentic AI',
-      'LLMs',
-      'RAG',
-      'Generative AI',
+      'Machine Learning',
+      'Deep Learning',
       'NLP',
       'Computer Vision',
+      'TensorFlow',
+      'Scikit-learn',
+      'NumPy',
+      'Pandas',
+      'OpenCV',
     ],
   },
   {
-    id: 'practices',
-    name: 'Practices',
-    code: '05 // PRACTICES',
-    color: '#FF4F9A', // Pink
-    glowColor: 'rgba(255, 79, 154, 0.45)',
-    icon: Workflow,
-    skills: [
-      'MLOps',
-      'Data Preprocessing',
-      'Model Deployment',
-      'REST APIs',
-    ],
-  },
-]
-
-// ============================================================================
-// BOTTOM STAT CARDS DATA
-// ============================================================================
-
-interface StatCardData {
-  number: string
-  label: string
-  highlight: string
-  category: string
-  color: string
-  icon: React.ComponentType<{ size?: number; color?: string; style?: React.CSSProperties }>
-}
-
-const STAT_CARDS: StatCardData[] = [
-  {
-    number: '3',
-    label: 'Programming Languages',
-    highlight: 'Python • Java • C',
-    category: 'CORE LANGUAGES',
-    color: '#FF6B00',
-    icon: Code2,
-  },
-  {
-    number: '7+',
-    label: 'ML Libraries',
-    highlight: 'TensorFlow • Scikit • NumPy • Pandas',
-    category: 'MACHINE LEARNING',
-    color: '#3B9EFF',
-    icon: Cpu,
-  },
-  {
-    number: '5+',
-    label: 'Cloud Tools',
-    highlight: 'AWS • GCP • Streamlit • GitHub',
-    category: 'INFRASTRUCTURE',
-    color: '#2DD4A0',
-    icon: Cloud,
-  },
-  {
-    number: '12+',
-    label: 'AI Projects',
-    highlight: 'Agentic AI • RAG • Computer Vision',
-    category: 'SOLUTIONS SHIPPED',
-    color: '#E63020',
+    id: 'genai',
+    name: 'Generative AI',
     icon: Sparkles,
+    color: '#FF4F9A',
+    glowColor: 'rgba(255, 79, 154, 0.4)',
+    skills: [
+      'LLM Integration',
+      'Prompt Engineering',
+      'RAG Fundamentals',
+      'LangChain',
+      'Gemini API',
+      'OpenAI API',
+      'Hugging Face',
+    ],
+  },
+  {
+    id: 'database-cloud',
+    name: 'Database & Cloud',
+    icon: Cloud,
+    color: '#00D4FF',
+    glowColor: 'rgba(0, 212, 255, 0.4)',
+    skills: ['MySQL', 'MongoDB', 'Firebase', 'PostgreSQL', 'AWS', 'Google Cloud', 'Docker'],
+  },
+  {
+    id: 'dev-tools',
+    name: 'Developer Tools',
+    icon: Workflow,
+    color: '#FFB800',
+    glowColor: 'rgba(255, 184, 0, 0.4)',
+    skills: ['Git', 'GitHub', 'VS Code', 'Jupyter Notebook', 'Google Colab', 'Postman', 'Figma'],
   },
 ]
+
+// Count total skills
+const TOTAL_SKILLS = CATEGORIES.reduce((sum, cat) => sum + cat.skills.length, 0)
+
+// ============================================================================
+// SKILL BADGE COMPONENT
+// ============================================================================
+
+const SkillBadge: React.FC<{
+  skill: string
+  color: string
+  glowColor: string
+  index: number
+  reducedMotion: boolean | null
+}> = ({ skill, color, glowColor, index, reducedMotion }) => (
+  <motion.span
+    variants={{
+      hidden: { opacity: 0, y: 14, scale: 0.92 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+          duration: 0.35,
+          delay: index * 0.04,
+          ease: [0.22, 1, 0.36, 1],
+        },
+      },
+    }}
+    whileHover={
+      reducedMotion
+        ? {}
+        : {
+            scale: 1.06,
+            y: -3,
+            transition: { type: 'spring', stiffness: 400, damping: 20 },
+          }
+    }
+    style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.5rem 1rem',
+      borderRadius: '8px',
+      background: 'rgba(255, 255, 255, 0.03)',
+      border: `1px solid ${color}30`,
+      color: '#FFFFFF',
+      fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
+      fontSize: '0.82rem',
+      fontWeight: 500,
+      letterSpacing: '0.02em',
+      cursor: 'default',
+      userSelect: 'none',
+      whiteSpace: 'nowrap',
+      transition: 'background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.borderColor = `${color}90`
+      e.currentTarget.style.background = `${color}15`
+      e.currentTarget.style.boxShadow = `0 0 20px ${glowColor}, 0 4px 16px rgba(0,0,0,0.4)`
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.borderColor = `${color}30`
+      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)'
+      e.currentTarget.style.boxShadow = 'none'
+    }}
+  >
+    <span
+      style={{
+        width: '6px',
+        height: '6px',
+        borderRadius: '50%',
+        backgroundColor: color,
+        boxShadow: `0 0 8px ${color}`,
+        flexShrink: 0,
+      }}
+    />
+    {skill}
+  </motion.span>
+)
+
+// ============================================================================
+// CATEGORY CARD COMPONENT
+// ============================================================================
+
+const CategoryCard: React.FC<{
+  category: SkillCategory
+  index: number
+  reducedMotion: boolean | null
+}> = ({ category, index, reducedMotion }) => {
+  const IconComp = category.icon
+
+  return (
+    <motion.div
+      initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 32 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.08,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileHover={
+        reducedMotion
+          ? {}
+          : {
+              y: -6,
+              transition: { duration: 0.25 },
+            }
+      }
+      style={{
+        position: 'relative',
+        background:
+          'linear-gradient(145deg, rgba(22, 22, 28, 0.65) 0%, rgba(14, 14, 18, 0.8) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.07)',
+        borderRadius: '16px',
+        padding: 'clamp(1.5rem, 2.5vw, 2rem)',
+        overflow: 'hidden',
+        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = `${category.color}50`
+        e.currentTarget.style.boxShadow = `0 16px 48px rgba(0,0,0,0.5), 0 0 30px ${category.color}18`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)'
+        e.currentTarget.style.boxShadow = 'none'
+      }}
+    >
+      {/* Top accent line */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '10%',
+          right: '10%',
+          height: '2px',
+          background: `linear-gradient(90deg, transparent, ${category.color}, transparent)`,
+          opacity: 0.7,
+        }}
+      />
+
+      {/* Corner ambient glow */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '140px',
+          height: '140px',
+          background: `radial-gradient(circle at top right, ${category.color}10 0%, transparent 70%)`,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Card Header */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          marginBottom: '1.25rem',
+        }}
+      >
+        <div
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '10px',
+            background: `${category.color}14`,
+            border: `1px solid ${category.color}35`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <IconComp size={18} color={category.color} />
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <h3
+            style={{
+              fontFamily: 'var(--font-display, "Outfit", sans-serif)',
+              fontSize: 'clamp(1rem, 1.3vw, 1.1rem)',
+              fontWeight: 700,
+              color: '#FFFFFF',
+              margin: 0,
+              letterSpacing: '0.01em',
+            }}
+          >
+            {category.name}
+          </h3>
+        </div>
+
+        <span
+          style={{
+            fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
+            fontSize: '0.68rem',
+            fontWeight: 600,
+            padding: '0.2rem 0.55rem',
+            borderRadius: '6px',
+            background: `${category.color}14`,
+            color: category.color,
+            border: `1px solid ${category.color}25`,
+            letterSpacing: '0.08em',
+          }}
+        >
+          {category.skills.length}
+        </span>
+      </div>
+
+      {/* Skill Badges */}
+      <motion.div
+        initial={reducedMotion ? false : 'hidden'}
+        whileInView="visible"
+        viewport={{ once: true, margin: '-20px' }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: reducedMotion ? 0 : 0.04,
+              delayChildren: reducedMotion ? 0 : 0.1,
+            },
+          },
+        }}
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.6rem',
+        }}
+      >
+        {category.skills.map((skill, i) => (
+          <SkillBadge
+            key={skill}
+            skill={skill}
+            color={category.color}
+            glowColor={category.glowColor}
+            index={i}
+            reducedMotion={reducedMotion}
+          />
+        ))}
+      </motion.div>
+    </motion.div>
+  )
+}
 
 // ============================================================================
 // MAIN COMPONENT
@@ -151,15 +369,15 @@ export const SkillsSection: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* ── Background Subtle Grid Overlay ── */}
+      {/* Background Grid */}
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px)
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
           `,
           backgroundSize: '48px 48px',
           backgroundPosition: 'center center',
@@ -172,7 +390,7 @@ export const SkillsSection: React.FC = () => {
         }}
       />
 
-      {/* ── Cinematic Ambient Glow Gradients ── */}
+      {/* Ambient Glow */}
       <div
         aria-hidden="true"
         style={{
@@ -181,8 +399,7 @@ export const SkillsSection: React.FC = () => {
           right: '-5%',
           width: '550px',
           height: '550px',
-          background:
-            'radial-gradient(circle, rgba(255, 107, 0, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(255, 107, 0, 0.07) 0%, transparent 70%)',
           filter: 'blur(80px)',
           pointerEvents: 'none',
           zIndex: 0,
@@ -196,15 +413,14 @@ export const SkillsSection: React.FC = () => {
           left: '-5%',
           width: '500px',
           height: '500px',
-          background:
-            'radial-gradient(circle, rgba(155, 109, 255, 0.07) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(155, 109, 255, 0.06) 0%, transparent 70%)',
           filter: 'blur(90px)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
       />
 
-      {/* ── Inner Content Container ── */}
+      {/* Content Container */}
       <div
         style={{
           maxWidth: 'var(--container-max, 1340px)',
@@ -213,7 +429,7 @@ export const SkillsSection: React.FC = () => {
           zIndex: 1,
         }}
       >
-        {/* ── Section Header ── */}
+        {/* Section Header */}
         <motion.div
           initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -221,7 +437,7 @@ export const SkillsSection: React.FC = () => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}
         >
-          {/* Section Label */}
+          {/* Label */}
           <div
             style={{
               display: 'inline-flex',
@@ -248,7 +464,7 @@ export const SkillsSection: React.FC = () => {
             <span>TECHNICAL ARSENAL</span>
           </div>
 
-          {/* Section Headline & Description */}
+          {/* Heading & Description */}
           <div
             style={{
               display: 'flex',
@@ -261,8 +477,7 @@ export const SkillsSection: React.FC = () => {
             <div>
               <h2
                 style={{
-                  fontFamily:
-                    'var(--font-headline, "Barlow Condensed", sans-serif)',
+                  fontFamily: 'var(--font-headline, "Barlow Condensed", sans-serif)',
                   fontSize: 'clamp(2.75rem, 7vw, 5.5rem)',
                   fontWeight: 900,
                   lineHeight: 0.95,
@@ -295,13 +510,12 @@ export const SkillsSection: React.FC = () => {
                   lineHeight: 1.6,
                 }}
               >
-                High-performance toolchains and architectures honed for autonomous
-                intelligence, enterprise machine learning pipelines, and cloud-scale
-                deployments.
+                Technologies and tools I use to build intelligent, scalable, and
+                user-focused applications.
               </p>
             </div>
 
-            {/* Quick Summary Pill */}
+            {/* Summary Pill */}
             <div
               style={{
                 display: 'inline-flex',
@@ -333,449 +547,108 @@ export const SkillsSection: React.FC = () => {
                   color: '#FFFFFF',
                 }}
               >
-                22 SKILLS ACROSS 5 DISCIPLINES
+                {TOTAL_SKILLS} SKILLS ACROSS {CATEGORIES.length} DISCIPLINES
               </span>
             </div>
           </div>
         </motion.div>
 
-        {/* ── Categories with Colored Separators & Freeform Floating Tags ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.75rem' }}>
-          {CATEGORIES.map((category, catIndex) => {
-            const CategoryIcon = category.icon
-
-            return (
-              <motion.div
-                key={category.id}
-                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{
-                  duration: 0.55,
-                  delay: catIndex * 0.08,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                style={{ position: 'relative' }}
-              >
-                {/* ── Colored Category Separator ── */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    marginBottom: '1.25rem',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  {/* Category Indicator Pip & Title */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.65rem',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '28px',
-                        height: '28px',
-                        borderRadius: '6px',
-                        background: `${category.color}15`,
-                        border: `1px solid ${category.color}40`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: `0 0 12px ${category.color}25`,
-                      }}
-                    >
-                      <CategoryIcon size={14} color={category.color} />
-                    </div>
-
-                    <span
-                      style={{
-                        fontFamily:
-                          'var(--font-mono, "JetBrains Mono", monospace)',
-                        fontSize: '0.85rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.12em',
-                        textTransform: 'uppercase',
-                        color: category.color,
-                      }}
-                    >
-                      {category.code}
-                    </span>
-
-                    <span
-                      style={{
-                        fontFamily:
-                          'var(--font-mono, "JetBrains Mono", monospace)',
-                        fontSize: '0.72rem',
-                        fontWeight: 600,
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '9999px',
-                        background: `${category.color}14`,
-                        color: category.color,
-                        border: `1px solid ${category.color}30`,
-                      }}
-                    >
-                      {category.skills.length} SKILLS
-                    </span>
-                  </div>
-
-                  {/* Gradient Rule Separator */}
-                  <div
-                    style={{
-                      flex: 1,
-                      minWidth: '120px',
-                      height: '1px',
-                      background: `linear-gradient(90deg, ${category.color}60 0%, ${category.color}20 60%, transparent 100%)`,
-                    }}
-                  />
-                </div>
-
-                {/* ── Freeform / Masonry Floating Colored Tags / Bubbles ── */}
-                <motion.div
-                  initial={shouldReduceMotion ? false : 'hidden'}
-                  whileInView="visible"
-                  viewport={{ once: true, margin: '-30px' }}
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: {
-                        staggerChildren: shouldReduceMotion ? 0 : 0.07,
-                        delayChildren: shouldReduceMotion ? 0 : 0.05,
-                      },
-                    },
-                  }}
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    gap: '0.85rem 1rem',
-                    paddingLeft: '0.25rem',
-                  }}
-                >
-                  {category.skills.map((skill, tagIndex) => {
-                    // Slight staggered floating duration & delay for organic levitation
-                    const floatDuration = 3.2 + ((tagIndex * 0.7) % 2)
-                    const floatDelay = (tagIndex * 0.25) % 1.5
-
-                    return (
-                      <motion.div
-                        key={skill}
-                        variants={{
-                          hidden: {
-                            opacity: 0,
-                            y: 18,
-                            scale: 0.9,
-                          },
-                          visible: {
-                            opacity: 1,
-                            y: 0,
-                            scale: 1,
-                            transition: {
-                              duration: 0.45,
-                              ease: [0.22, 1, 0.36, 1],
-                            },
-                          },
-                        }}
-                        animate={
-                          shouldReduceMotion
-                            ? undefined
-                            : {
-                                y: [0, -4, 0],
-                                transition: {
-                                  duration: floatDuration,
-                                  repeat: Infinity,
-                                  repeatType: 'reverse',
-                                  ease: 'easeInOut',
-                                  delay: floatDelay,
-                                },
-                              }
-                        }
-                        whileHover={
-                          shouldReduceMotion
-                            ? {}
-                            : {
-                                scale: 1.08,
-                                y: -5,
-                                transition: {
-                                  type: 'spring',
-                                  stiffness: 450,
-                                  damping: 22,
-                                },
-                              }
-                        }
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.65rem',
-                          padding: '0.68rem 1.35rem',
-                          borderRadius: '9999px',
-                          background: 'rgba(255, 255, 255, 0.03)',
-                          backdropFilter: 'blur(16px)',
-                          WebkitBackdropFilter: 'blur(16px)',
-                          border: `1px solid ${category.color}35`,
-                          color: '#FFFFFF',
-                          fontFamily:
-                            'var(--font-mono, "JetBrains Mono", monospace)',
-                          fontSize: 'clamp(0.85rem, 1.1vw, 0.925rem)',
-                          fontWeight: 500,
-                          letterSpacing: '0.025em',
-                          cursor: 'default',
-                          userSelect: 'none',
-                          boxShadow: `0 4px 18px rgba(0, 0, 0, 0.35), inset 0 0 14px ${category.color}0a`,
-                          transition:
-                            'background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = category.color
-                          e.currentTarget.style.backgroundColor = `${category.color}1c`
-                          e.currentTarget.style.boxShadow = `0 0 26px ${category.glowColor}, 0 8px 24px rgba(0, 0, 0, 0.5)`
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.borderColor = `${category.color}35`
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(255, 255, 255, 0.03)'
-                          e.currentTarget.style.boxShadow = `0 4px 18px rgba(0, 0, 0, 0.35), inset 0 0 14px ${category.color}0a`
-                        }}
-                      >
-                        {/* Dot Indicator */}
-                        <span
-                          style={{
-                            width: '7.5px',
-                            height: '7.5px',
-                            borderRadius: '50%',
-                            backgroundColor: category.color,
-                            boxShadow: `0 0 9px ${category.color}, 0 0 3px ${category.color}`,
-                            flexShrink: 0,
-                            display: 'inline-block',
-                          }}
-                        />
-
-                        {/* Skill Name */}
-                        <span style={{ whiteSpace: 'nowrap' }}>{skill}</span>
-                      </motion.div>
-                    )
-                  })}
-                </motion.div>
-              </motion.div>
-            )
-          })}
-        </div>
-
-        {/* ── Bottom Row: 4 Stat Cards ── */}
-        <motion.div
-          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        {/* Category Cards Grid */}
+        <div
           style={{
-            marginTop: 'clamp(4rem, 7vw, 5.5rem)',
-            paddingTop: '3rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 380px), 1fr))',
+            gap: '1.25rem',
           }}
         >
-          {/* Subtle Row Header */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '1.75rem',
-              flexWrap: 'wrap',
-              gap: '0.75rem',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'var(--color-text-muted, rgba(255, 255, 255, 0.35))',
-              }}
-            >
-              // PRODUCTION METRICS & CAPABILITIES SUMMARY
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
-                fontSize: '0.72rem',
-                color: 'var(--color-orange, #FF6B00)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
-            >
-              <span>CONTINUOUSLY EXPANDING</span>
-              <ArrowUpRight size={14} />
-            </div>
-          </div>
+          {CATEGORIES.map((category, index) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              index={index}
+              reducedMotion={shouldReduceMotion}
+            />
+          ))}
+        </div>
 
-          {/* 4 Responsive Cards */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns:
-                'repeat(auto-fit, minmax(clamp(220px, 22vw, 280px), 1fr))',
-              gap: '1.25rem',
-            }}
-          >
-            {STAT_CARDS.map((stat) => {
-              const IconComp = stat.icon
-
-              return (
-                <motion.div
-                  key={stat.label}
-                  whileHover={
-                    shouldReduceMotion
-                      ? {}
-                      : {
-                          y: -6,
-                          scale: 1.015,
-                          transition: { duration: 0.2 },
-                        }
-                  }
+        {/* Bottom Summary Row */}
+        <motion.div
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            marginTop: 'clamp(3rem, 5vw, 4rem)',
+            padding: '1.5rem 2rem',
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, rgba(22, 22, 28, 0.6) 0%, rgba(14, 14, 18, 0.7) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2rem',
+          }}
+        >
+          {[
+            { label: 'Languages', value: '4', color: '#FF6B00', icon: Terminal },
+            { label: 'AI/ML Tools', value: '16+', color: '#9B6DFF', icon: Brain },
+            { label: 'Cloud & DB', value: '7', color: '#00D4FF', icon: Cloud },
+            { label: 'Projects Built', value: '12+', color: '#2DD4A0', icon: Sparkles },
+          ].map((stat) => {
+            const StatIcon = stat.icon
+            return (
+              <div
+                key={stat.label}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.5rem 0',
+                }}
+              >
+                <div
                   style={{
-                    position: 'relative',
-                    background:
-                      'linear-gradient(145deg, rgba(22, 22, 28, 0.7) 0%, rgba(14, 14, 18, 0.8) 100%)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(255, 255, 255, 0.07)',
-                    borderRadius: '16px',
-                    padding: '1.75rem 1.5rem',
-                    overflow: 'hidden',
-                    transition:
-                      'border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = `${stat.color}60`
-                    e.currentTarget.style.boxShadow = `0 14px 36px rgba(0, 0, 0, 0.6), 0 0 24px ${stat.color}25`
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor =
-                      'rgba(255, 255, 255, 0.07)'
-                    e.currentTarget.style.boxShadow = 'none'
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: `${stat.color}14`,
+                    border: `1px solid ${stat.color}30`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  {/* Top Glowing Accent Line */}
+                  <StatIcon size={15} color={stat.color} />
+                </div>
+                <div>
                   <div
                     style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: '12%',
-                      right: '12%',
-                      height: '2px',
-                      background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)`,
-                    }}
-                  />
-
-                  {/* Corner Glow Overlay */}
-                  <div
-                    aria-hidden="true"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      width: '120px',
-                      height: '120px',
-                      background: `radial-gradient(circle at top right, ${stat.color}15 0%, transparent 70%)`,
-                      pointerEvents: 'none',
-                    }}
-                  />
-
-                  {/* Card Header: Icon & Category */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '1rem',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily:
-                          'var(--font-mono, "JetBrains Mono", monospace)',
-                        fontSize: '0.68rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.14em',
-                        color: 'var(--color-text-muted, rgba(255, 255, 255, 0.4))',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {stat.category}
-                    </span>
-
-                    <div
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '8px',
-                        background: `${stat.color}14`,
-                        border: `1px solid ${stat.color}35`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <IconComp size={16} color={stat.color} />
-                    </div>
-                  </div>
-
-                  {/* Stat Big Number */}
-                  <div
-                    style={{
-                      fontFamily:
-                        'var(--font-headline, "Barlow Condensed", sans-serif)',
-                      fontSize: 'clamp(3rem, 5vw, 4.25rem)',
-                      fontWeight: 900,
-                      lineHeight: 0.9,
-                      letterSpacing: '-0.01em',
+                      fontFamily: 'var(--font-headline, "Barlow Condensed", sans-serif)',
+                      fontSize: '1.6rem',
+                      fontWeight: 800,
+                      lineHeight: 1,
                       color: stat.color,
-                      marginBottom: '0.45rem',
-                      textShadow: `0 0 24px ${stat.color}35`,
                     }}
                   >
-                    {stat.number}
+                    {stat.value}
                   </div>
-
-                  {/* Stat Label */}
                   <div
                     style={{
-                      fontFamily: 'var(--font-display, "Outfit", sans-serif)',
-                      fontSize: '1.05rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.01em',
-                      color: '#FFFFFF',
-                      marginBottom: '0.35rem',
+                      fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
+                      fontSize: '0.68rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      textTransform: 'uppercase',
                     }}
                   >
                     {stat.label}
                   </div>
-
-                  {/* Subtitle / Highlight */}
-                  <div
-                    style={{
-                      fontFamily:
-                        'var(--font-mono, "JetBrains Mono", monospace)',
-                      fontSize: '0.72rem',
-                      color:
-                        'var(--color-text-secondary, rgba(255, 255, 255, 0.55))',
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {stat.highlight}
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
+                </div>
+              </div>
+            )
+          })}
         </motion.div>
       </div>
     </section>
